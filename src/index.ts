@@ -1,56 +1,34 @@
-export async function useFlow(...functions: any) {
-  if (!functions) return
-
+export async function useFlow(...args: any[]) {
   let acc = {}
 
-  if (typeof functions == 'function') {
-    let resp = await functions(acc)
-
-    if (typeof resp == 'function') {
-      resp = await resp()
-    }
-
-    return resp
-  }
-
-  if (functions.constructor.name === 'Object') {
-    for (const func in functions) {
-      const fn = functions[func]
-
-      if (typeof fn === 'function') {
-        let resp = await fn(acc)
-
-        if (typeof resp == 'function') {
-          resp = await resp()
-        }
-
-        if (resp && fn.name) {
-          acc[func] = resp
-        }
+  // Check if the first argument is an object with named functions
+  if (args.length === 1 && typeof args[0] === 'object' && args[0].constructor.name === 'Object') {
+    const functions = args[0]
+    for (const key in functions) {
+      if (typeof functions[key] === 'function') {
+        const result = await functions[key]()
+        // Merge the result into the accumulator object
+        acc = { ...acc, ...result }
       }
     }
   } else {
-    for (const fn of functions) {
-      // const fn = functions[func]
-
+    // Handle as rest parameters (functions, arrays, promises)
+    for (const fn of args) {
       if (Array.isArray(fn)) {
-        acc = await Promise.all(fn)
-      }
-
-      if (fn instanceof Promise) {
-        await fn
-      }
-
-      if (typeof fn === 'function') {
-        let resp = await fn(acc)
-
-        if (typeof resp === 'function') {
-          resp = await resp()
+        const results = await Promise.all(fn.map((f) => (typeof f === 'function' ? f(acc) : f)))
+        results.forEach((result) => Object.assign(acc, result))
+      } else if (fn instanceof Promise) {
+        const result = await fn
+        Object.assign(acc, result)
+      } else if (typeof fn === 'function') {
+        const result = await fn(acc)
+        if (typeof result !== 'object' && fn.name) {
+          Object.assign(acc, { [fn.name]: result })
+        } else {
+          Object.assign(acc, result)
         }
-
-        if (resp && fn.name) {
-          acc[fn.name] = resp
-        }
+      } else if (typeof fn === 'object' && fn.constructor.name === 'Object') {
+        Object.assign(acc, fn)
       }
     }
   }
