@@ -1,0 +1,26 @@
+{
+  "name": "@ruslankonev/use-flow",
+  "version": "1.0.0",
+  "description": "Execute a series of functions",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ruslankonev/use-flow.git"
+  },
+  "keywords": [
+    "flow",
+    "functions",
+    "pipeline",
+    "sequence"
+  ],
+  "author": "Ruslan Konev <konev.lincor@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ruslankonev/use-flow/issues"
+  },
+  "homepage": "https://github.com/ruslankonev/use-flow#readme"
+}
