@@ -1,4 +1,4 @@
-# useFlow
+# useFlow()
 
 The `useFlow` function orchestrates asynchronous operations, allowing for sequential and parallel execution of tasks. This versatile tool supports a variety of use cases, from data fetching and processing to complex workflow management.
 
@@ -10,6 +10,10 @@ The `useFlow` function orchestrates asynchronous operations, allowing for sequen
 - **Dynamic Workflow Management**: Easily manage complex asynchronous workflows within a single, cohesive pipeline.
 
 ## Installation
+
+```sh
+npm i @ruslankonev/use-flow
+```
 
 No specific installation steps are required other than including the `useFlow` function in your project. Ensure you have a modern JavaScript environment that supports `async/await` syntax.
 
@@ -35,7 +39,19 @@ async function saveData(processedData) {
 }
 
 // Execute tasks sequentially
-useFlow(fetchData, processData, saveData);
+useFlow(
+  fetchData,
+  processData,
+  saveData
+);
+
+// One more example
+useFlow(
+  () => ({startValue: Date.now()}),
+  (payload) => somePromise({value: 1}),
+  (response) => processData
+);
+
 ```
 
 ### Parallel Execution
@@ -54,7 +70,10 @@ async function fetchPosts() {
 }
 
 // Execute fetchUserData and fetchPosts in parallel, then process results
-useFlow([fetchUserData, fetchPosts], processData);
+useFlow(
+  [fetchUserData, fetchPosts],
+  processData
+);
 ```
 
 ### Handling Promises
@@ -64,7 +83,10 @@ The `useFlow` function can also handle promises directly as part of the workflow
 ```typescript
 const somePromise = new Promise((resolve) => resolve('Some data'));
 
-useFlow(somePromise, processData);
+useFlow(
+  somePromise,
+  (response) => processData
+);
 ```
 
 ## Error Handling
